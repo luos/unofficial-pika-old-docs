@@ -1,0 +1,237 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Introduction to Pika &#8212; pika 0.10.0 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="Core Class and Module Documentation" href="../modules/" />
+    <link rel="prev" title="Introduction to Pika" href="../" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex/" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex/" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../modules/" title="Core Class and Module Documentation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../" title="Introduction to Pika"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../">pika 0.10.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="introduction-to-pika">
+<h1>Introduction to Pika<a class="headerlink" href="#introduction-to-pika" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="io-and-event-looping">
+<h2>IO and Event Looping<a class="headerlink" href="#io-and-event-looping" title="Permalink to this headline">¶</a></h2>
+<p>As AMQP is a two-way RPC protocol where the client can send requests to the server and the server can send requests to a client, Pika implements or extends IO loops in each of its asynchronous connection adapters. These IO loops are blocking methods which loop and listen for events. Each asynchronous adapters follows the same standard for invoking the IO loop. The IO loop is created when the connection adapter is created. To start an IO loop for any given adapter, call the <code class="docutils literal notranslate"><span class="pre">connection.ioloop.start()</span></code> method.</p>
+<p>If you are using an external IO loop such as Tornado’s <a class="reference external" href="http://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop" title="(in Tornado v6.0.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">IOLoop</span></code></a>, you invoke it as you normally would and then add the adapter to it.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pika</span>
+
+<span class="k">def</span> <span class="nf">on_open</span><span class="p">(</span><span class="n">connection</span><span class="p">):</span>
+    <span class="c1"># Invoked when the connection is open</span>
+    <span class="k">pass</span>
+
+<span class="c1"># Create our connection object, passing in the on_open method</span>
+<span class="n">connection</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">SelectConnection</span><span class="p">(</span><span class="n">on_open_callback</span><span class="o">=</span><span class="n">on_open</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># Loop so we can communicate with RabbitMQ</span>
+    <span class="n">connection</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+    <span class="c1"># Gracefully close the connection</span>
+    <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="c1"># Loop until we&#39;re fully closed, will stop on its own</span>
+    <span class="n">connection</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="continuation-passing-style">
+<span id="intro-to-cps"></span><h2>Continuation-Passing Style<a class="headerlink" href="#continuation-passing-style" title="Permalink to this headline">¶</a></h2>
+<p>Interfacing with Pika asynchronously is done by passing in callback methods you would like to have invoked when a certain event has completed. For example, if you are going to declare a queue, you pass in a method that will be called when the RabbitMQ server returns a <a class="reference external" href="http://www.rabbitmq.com/amqp-0-9-1-quickref.html#queue.declare">Queue.DeclareOk</a> response.</p>
+<p>In our example below we use the following four easy steps:</p>
+<ol class="arabic simple">
+<li>We start by creating our connection object, then starting our event loop.</li>
+<li>When we are connected, the <em>on_connected</em> method is called. In that method we create a channel.</li>
+<li>When the channel is created, the <em>on_channel_open</em> method is called. In that method we declare a queue.</li>
+<li>When the queue is declared successfully, <em>on_queue_declared</em> is called. In that method we call <code class="xref py py-meth docutils literal notranslate"><span class="pre">channel.basic_consume</span></code> telling it to call the handle_delivery for each message RabbitMQ delivers to us.</li>
+<li>When RabbitMQ has a message to send us, it call the handle_delivery method passing the AMQP Method frame, Header frame and Body.</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Step #1 is on line #28 and Step #2 is on line #6. This is so that Python knows about the functions we’ll call in Steps #2 through #5.</p>
+</div>
+<p id="cps-example">Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pika</span>
+
+<span class="c1"># Create a global channel variable to hold our channel object in</span>
+<span class="n">channel</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="c1"># Step #2</span>
+<span class="k">def</span> <span class="nf">on_connected</span><span class="p">(</span><span class="n">connection</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Called when we are fully connected to RabbitMQ&quot;&quot;&quot;</span>
+    <span class="c1"># Open a channel</span>
+    <span class="n">connection</span><span class="o">.</span><span class="n">channel</span><span class="p">(</span><span class="n">on_channel_open</span><span class="p">)</span>
+
+<span class="c1"># Step #3</span>
+<span class="k">def</span> <span class="nf">on_channel_open</span><span class="p">(</span><span class="n">new_channel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Called when our channel has opened&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">channel</span>
+    <span class="n">channel</span> <span class="o">=</span> <span class="n">new_channel</span>
+    <span class="n">channel</span><span class="o">.</span><span class="n">queue_declare</span><span class="p">(</span><span class="n">queue</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">durable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exclusive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">auto_delete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">on_queue_declared</span><span class="p">)</span>
+
+<span class="c1"># Step #4</span>
+<span class="k">def</span> <span class="nf">on_queue_declared</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Called when RabbitMQ has told us our Queue has been declared, frame is the response from RabbitMQ&quot;&quot;&quot;</span>
+    <span class="n">channel</span><span class="o">.</span><span class="n">basic_consume</span><span class="p">(</span><span class="n">handle_delivery</span><span class="p">,</span> <span class="n">queue</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
+
+<span class="c1"># Step #5</span>
+<span class="k">def</span> <span class="nf">handle_delivery</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Called when we receive a message from RabbitMQ&quot;&quot;&quot;</span>
+    <span class="nb">print</span> <span class="n">body</span>
+
+<span class="c1"># Step #1: Connect to RabbitMQ using the default parameters</span>
+<span class="n">parameters</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">ConnectionParameters</span><span class="p">()</span>
+<span class="n">connection</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">SelectConnection</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">on_connected</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># Loop so we can communicate with RabbitMQ</span>
+    <span class="n">connection</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+    <span class="c1"># Gracefully close the connection</span>
+    <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="c1"># Loop until we&#39;re fully closed, will stop on its own</span>
+    <span class="n">connection</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="credentials">
+<h2>Credentials<a class="headerlink" href="#credentials" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../modules/credentials/#module-pika.credentials" title="pika.credentials"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pika.credentials</span></code></a> module provides the mechanism by which you pass the username and password to the <a class="reference internal" href="../modules/parameters/#pika.connection.ConnectionParameters" title="pika.connection.ConnectionParameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConnectionParameters</span></code></a> class when it is created.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pika</span>
+<span class="n">credentials</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">PlainCredentials</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">)</span>
+<span class="n">parameters</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">ConnectionParameters</span><span class="p">(</span><span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="connection-parameters">
+<span id="id1"></span><h2>Connection Parameters<a class="headerlink" href="#connection-parameters" title="Permalink to this headline">¶</a></h2>
+<p>There are two types of connection parameter classes in Pika to allow you to pass the connection information into a connection adapter, <a class="reference internal" href="../modules/parameters/#pika.connection.ConnectionParameters" title="pika.connection.ConnectionParameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConnectionParameters</span></code></a> and <a class="reference internal" href="../modules/parameters/#pika.connection.URLParameters" title="pika.connection.URLParameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">URLParameters</span></code></a>. Both classes share the same default connection values.</p>
+</div>
+<div class="section" id="tcp-backpressure">
+<span id="intro-to-backpressure"></span><h2>TCP Backpressure<a class="headerlink" href="#tcp-backpressure" title="Permalink to this headline">¶</a></h2>
+<p>As of RabbitMQ 2.0, client side <a class="reference external" href="http://www.rabbitmq.com/amqp-0-9-1-quickref.html#channel.flow">Channel.Flow</a> has been removed <a class="footnote-reference" href="#f1" id="id2">[1]</a>. Instead, the RabbitMQ broker uses TCP Backpressure to slow your client if it is delivering messages too fast. If you pass in backpressure_detection into your connection parameters, Pika attempts to help you handle this situation by providing a mechanism by which you may be notified if Pika has noticed too many frames have yet to be delivered. By registering a callback function with the <a class="reference internal" href="../modules/connection/#pika.connection.Connection.add_backpressure_callback" title="pika.connection.Connection.add_backpressure_callback"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_backpressure_callback</span></code></a> method of any connection adapter, your function will be called when Pika sees that a backlog of 10 times the average frame size you have been sending has been exceeded. You may tweak the notification multiplier value by calling the <a class="reference internal" href="../modules/connection/#pika.connection.Connection.set_backpressure_multiplier" title="pika.connection.Connection.set_backpressure_multiplier"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_backpressure_multiplier</span></code></a> method passing any integer value.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pika</span>
+
+<span class="n">parameters</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">URLParameters</span><span class="p">(</span><span class="s1">&#39;amqp://guest:guest@rabbit-server1:5672/</span><span class="si">%2F</span><span class="s1">?backpressure_detection=t&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Footnotes</p>
+<table class="docutils footnote" frame="void" id="f1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>“more effective flow control mechanism that does not require cooperation from clients and reacts quickly to prevent the broker from exhausing memory - see <a class="reference external" href="http://www.rabbitmq.com/extensions.html#memsup">http://www.rabbitmq.com/extensions.html#memsup</a>” from <a class="reference external" href="http://lists.rabbitmq.com/pipermail/rabbitmq-announce/attachments/20100825/2c672695/attachment.txt">http://lists.rabbitmq.com/pipermail/rabbitmq-announce/attachments/20100825/2c672695/attachment.txt</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introduction to Pika</a><ul>
+<li><a class="reference internal" href="#io-and-event-looping">IO and Event Looping</a></li>
+<li><a class="reference internal" href="#continuation-passing-style">Continuation-Passing Style</a></li>
+<li><a class="reference internal" href="#credentials">Credentials</a></li>
+<li><a class="reference internal" href="#connection-parameters">Connection Parameters</a></li>
+<li><a class="reference internal" href="#tcp-backpressure">TCP Backpressure</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../"
+                        title="previous chapter">Introduction to Pika</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../modules/"
+                        title="next chapter">Core Class and Module Documentation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/intro.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search/" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex/" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex/" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../modules/" title="Core Class and Module Documentation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../" title="Introduction to Pika"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../">pika 0.10.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2009-2015, Tony Garnock-Jones, Gavin M. Roy, Pivotal and others..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

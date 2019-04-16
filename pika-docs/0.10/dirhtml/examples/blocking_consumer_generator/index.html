@@ -1,0 +1,179 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Using the BlockingChannel.consume generator to consume messages &#8212; pika 0.10.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+    <link rel="next" title="Comparing Message Publishing with BlockingConnection and SelectConnection" href="../comparing_publishing_sync_async/" />
+    <link rel="prev" title="Using the Blocking Connection to consume messages from RabbitMQ" href="../blocking_consume/" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex/" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex/" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../comparing_publishing_sync_async/" title="Comparing Message Publishing with BlockingConnection and SelectConnection"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../blocking_consume/" title="Using the Blocking Connection to consume messages from RabbitMQ"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../">pika 0.10.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../" accesskey="U">Usage Examples</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="using-the-blockingchannel-consume-generator-to-consume-messages">
+<h1>Using the BlockingChannel.consume generator to consume messages<a class="headerlink" href="#using-the-blockingchannel-consume-generator-to-consume-messages" title="Permalink to this headline">¶</a></h1>
+<p id="example-blocking-basic-get">The <a class="reference internal" href="../../modules/adapters/blocking/#pika.adapters.blocking_connection.BlockingChannel.consume" title="pika.adapters.blocking_connection.BlockingChannel.consume"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BlockingChannel.consume</span></code></a> method is a generator that will return a tuple of method, properties and body.</p>
+<p>When you escape out of the loop, be sure to call consumer.cancel() to return any unprocessed messages.</p>
+<p>Example of consuming messages and acknowledging them:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pika</span>
+
+<span class="n">connection</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">BlockingConnection</span><span class="p">()</span>
+<span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">channel</span><span class="p">()</span>
+
+<span class="c1"># Get ten messages and break out</span>
+<span class="k">for</span> <span class="n">method_frame</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">body</span> <span class="ow">in</span> <span class="n">channel</span><span class="o">.</span><span class="n">consume</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">):</span>
+
+    <span class="c1"># Display the message parts</span>
+    <span class="nb">print</span> <span class="n">method_frame</span>
+    <span class="nb">print</span> <span class="n">properties</span>
+    <span class="nb">print</span> <span class="n">body</span>
+
+    <span class="c1"># Acknowledge the message</span>
+    <span class="n">channel</span><span class="o">.</span><span class="n">basic_ack</span><span class="p">(</span><span class="n">method_frame</span><span class="o">.</span><span class="n">delivery_tag</span><span class="p">)</span>
+
+    <span class="c1"># Escape out of the loop after 10 messages</span>
+    <span class="k">if</span> <span class="n">method_frame</span><span class="o">.</span><span class="n">delivery_tag</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="k">break</span>
+
+<span class="c1"># Cancel the consumer and return any pending messages</span>
+<span class="n">requeued_messages</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+<span class="nb">print</span> <span class="s1">&#39;Requeued </span><span class="si">%i</span><span class="s1"> messages&#39;</span> <span class="o">%</span> <span class="n">requeued_messages</span>
+
+<span class="c1"># Close the channel and the connection</span>
+<span class="n">channel</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If you have pending messages in the test queue, your output should look something like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(pika)gmr-0x02:pika gmr$ python blocking_nack.py
+&lt;Basic.Deliver([&#39;consumer_tag=ctag1.0&#39;, &#39;redelivered=True&#39;, &#39;routing_key=test&#39;, &#39;delivery_tag=1&#39;, &#39;exchange=test&#39;])&gt;
+&lt;BasicProperties([&#39;delivery_mode=1&#39;, &#39;content_type=text/plain&#39;])&gt;
+Hello World!
+&lt;Basic.Deliver([&#39;consumer_tag=ctag1.0&#39;, &#39;redelivered=True&#39;, &#39;routing_key=test&#39;, &#39;delivery_tag=2&#39;, &#39;exchange=test&#39;])&gt;
+&lt;BasicProperties([&#39;delivery_mode=1&#39;, &#39;content_type=text/plain&#39;])&gt;
+Hello World!
+&lt;Basic.Deliver([&#39;consumer_tag=ctag1.0&#39;, &#39;redelivered=True&#39;, &#39;routing_key=test&#39;, &#39;delivery_tag=3&#39;, &#39;exchange=test&#39;])&gt;
+&lt;BasicProperties([&#39;delivery_mode=1&#39;, &#39;content_type=text/plain&#39;])&gt;
+Hello World!
+&lt;Basic.Deliver([&#39;consumer_tag=ctag1.0&#39;, &#39;redelivered=True&#39;, &#39;routing_key=test&#39;, &#39;delivery_tag=4&#39;, &#39;exchange=test&#39;])&gt;
+&lt;BasicProperties([&#39;delivery_mode=1&#39;, &#39;content_type=text/plain&#39;])&gt;
+Hello World!
+&lt;Basic.Deliver([&#39;consumer_tag=ctag1.0&#39;, &#39;redelivered=True&#39;, &#39;routing_key=test&#39;, &#39;delivery_tag=5&#39;, &#39;exchange=test&#39;])&gt;
+&lt;BasicProperties([&#39;delivery_mode=1&#39;, &#39;content_type=text/plain&#39;])&gt;
+Hello World!
+&lt;Basic.Deliver([&#39;consumer_tag=ctag1.0&#39;, &#39;redelivered=True&#39;, &#39;routing_key=test&#39;, &#39;delivery_tag=6&#39;, &#39;exchange=test&#39;])&gt;
+&lt;BasicProperties([&#39;delivery_mode=1&#39;, &#39;content_type=text/plain&#39;])&gt;
+Hello World!
+&lt;Basic.Deliver([&#39;consumer_tag=ctag1.0&#39;, &#39;redelivered=True&#39;, &#39;routing_key=test&#39;, &#39;delivery_tag=7&#39;, &#39;exchange=test&#39;])&gt;
+&lt;BasicProperties([&#39;delivery_mode=1&#39;, &#39;content_type=text/plain&#39;])&gt;
+Hello World!
+&lt;Basic.Deliver([&#39;consumer_tag=ctag1.0&#39;, &#39;redelivered=True&#39;, &#39;routing_key=test&#39;, &#39;delivery_tag=8&#39;, &#39;exchange=test&#39;])&gt;
+&lt;BasicProperties([&#39;delivery_mode=1&#39;, &#39;content_type=text/plain&#39;])&gt;
+Hello World!
+&lt;Basic.Deliver([&#39;consumer_tag=ctag1.0&#39;, &#39;redelivered=True&#39;, &#39;routing_key=test&#39;, &#39;delivery_tag=9&#39;, &#39;exchange=test&#39;])&gt;
+&lt;BasicProperties([&#39;delivery_mode=1&#39;, &#39;content_type=text/plain&#39;])&gt;
+Hello World!
+&lt;Basic.Deliver([&#39;consumer_tag=ctag1.0&#39;, &#39;redelivered=True&#39;, &#39;routing_key=test&#39;, &#39;delivery_tag=10&#39;, &#39;exchange=test&#39;])&gt;
+&lt;BasicProperties([&#39;delivery_mode=1&#39;, &#39;content_type=text/plain&#39;])&gt;
+Hello World!
+Requeued 1894 messages
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../blocking_consume/"
+                        title="previous chapter">Using the Blocking Connection to consume messages from RabbitMQ</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../comparing_publishing_sync_async/"
+                        title="next chapter">Comparing Message Publishing with BlockingConnection and SelectConnection</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/blocking_consumer_generator.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search/" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex/" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex/" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../comparing_publishing_sync_async/" title="Comparing Message Publishing with BlockingConnection and SelectConnection"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../blocking_consume/" title="Using the Blocking Connection to consume messages from RabbitMQ"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../">pika 0.10.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../" >Usage Examples</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2009-2015, Tony Garnock-Jones, Gavin M. Roy, Pivotal and others..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

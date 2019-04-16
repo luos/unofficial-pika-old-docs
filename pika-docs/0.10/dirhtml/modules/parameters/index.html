@@ -1,0 +1,257 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Connection Parameters &#8212; pika 0.10.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+    <link rel="next" title="pika.spec" href="../spec/" />
+    <link rel="prev" title="Exceptions" href="../exceptions/" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex/" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex/" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../spec/" title="pika.spec"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../exceptions/" title="Exceptions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../">pika 0.10.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../" accesskey="U">Core Class and Module Documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="connection-parameters">
+<h1>Connection Parameters<a class="headerlink" href="#connection-parameters" title="Permalink to this headline">¶</a></h1>
+<p>To maintain flexibility in how you specify the connection information required for your applications to properly connect to RabbitMQ, pika implements two classes for encapsulating the information, <a class="reference internal" href="#pika.connection.ConnectionParameters" title="pika.connection.ConnectionParameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConnectionParameters</span></code></a> and <a class="reference internal" href="#pika.connection.URLParameters" title="pika.connection.URLParameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">URLParameters</span></code></a>.</p>
+<div class="section" id="connectionparameters">
+<h2>ConnectionParameters<a class="headerlink" href="#connectionparameters" title="Permalink to this headline">¶</a></h2>
+<p>The classic object for specifying all of the connection parameters required to connect to RabbitMQ, <a class="reference internal" href="#pika.connection.ConnectionParameters" title="pika.connection.ConnectionParameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConnectionParameters</span></code></a> provides attributes for tweaking every possible connection option.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pika</span>
+
+<span class="c1"># Set the connection parameters to connect to rabbit-server1 on port 5672</span>
+<span class="c1"># on the / virtual host using the username &quot;guest&quot; and password &quot;guest&quot;</span>
+<span class="n">credentials</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">PlainCredentials</span><span class="p">(</span><span class="s1">&#39;guest&#39;</span><span class="p">,</span> <span class="s1">&#39;guest&#39;</span><span class="p">)</span>
+<span class="n">parameters</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">ConnectionParameters</span><span class="p">(</span><span class="s1">&#39;rabbit-server1&#39;</span><span class="p">,</span>
+                                       <span class="mi">5672</span><span class="p">,</span>
+                                       <span class="s1">&#39;/&#39;</span><span class="p">,</span>
+                                       <span class="n">credentials</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt id="pika.connection.ConnectionParameters">
+<em class="property">class </em><code class="descclassname">pika.connection.</code><code class="descname">ConnectionParameters</code><span class="sig-paren">(</span><em>host=None</em>, <em>port=None</em>, <em>virtual_host=None</em>, <em>credentials=None</em>, <em>channel_max=None</em>, <em>frame_max=None</em>, <em>heartbeat_interval=None</em>, <em>ssl=None</em>, <em>ssl_options=None</em>, <em>connection_attempts=None</em>, <em>retry_delay=None</em>, <em>socket_timeout=None</em>, <em>locale=None</em>, <em>backpressure_detection=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.connection.ConnectionParameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connection parameters object that is passed into the connection adapter
+upon construction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>host</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Hostname or IP Address to connect to</li>
+<li><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – TCP port to connect to</li>
+<li><strong>virtual_host</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – RabbitMQ virtual host to use</li>
+<li><strong>credentials</strong> (<em>pika.credentials.Credentials</em>) – auth credentials</li>
+<li><strong>channel_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Maximum number of channels to allow</li>
+<li><strong>frame_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The maximum byte size for an AMQP frame</li>
+<li><strong>heartbeat_interval</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – How often to send heartbeats</li>
+<li><strong>ssl</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Enable SSL</li>
+<li><strong>ssl_options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Arguments passed to ssl.wrap_socket as</li>
+<li><strong>connection_attempts</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Maximum number of retry attempts</li>
+<li><strong>retry_delay</strong> (<em>int|float</em>) – Time to wait in seconds, before the next</li>
+<li><strong>socket_timeout</strong> (<em>int|float</em>) – Use for high latency networks</li>
+<li><strong>locale</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Set the locale value</li>
+<li><strong>backpressure_detection</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Toggle backpressure detection</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="urlparameters">
+<h2>URLParameters<a class="headerlink" href="#urlparameters" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="#pika.connection.URLParameters" title="pika.connection.URLParameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">URLParameters</span></code></a> class allows you to pass in an AMQP URL when creating the object and supports the host, port, virtual host, ssl, username and password in the base URL and other options are passed in via query parameters.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pika</span>
+
+<span class="c1"># Set the connection parameters to connect to rabbit-server1 on port 5672</span>
+<span class="c1"># on the / virtual host using the username &quot;guest&quot; and password &quot;guest&quot;</span>
+<span class="n">parameters</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">URLParameters</span><span class="p">(</span><span class="s1">&#39;amqp://guest:guest@rabbit-server1:5672/</span><span class="si">%2F</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt id="pika.connection.URLParameters">
+<em class="property">class </em><code class="descclassname">pika.connection.</code><code class="descname">URLParameters</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.connection.URLParameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect to RabbitMQ via an AMQP URL in the format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>amqp://username:password@host:port/&lt;virtual_host&gt;[?query-string]
+</pre></div>
+</div>
+<p>Ensure that the virtual host is URI encoded when specified. For example if
+you are using the default “/” virtual host, the value should be <cite>%2f</cite>.</p>
+<p>Valid query string values are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="first docutils">
+<dt>backpressure_detection:</dt>
+<dd>Toggle backpressure detection, possible values are <cite>t</cite> or <cite>f</cite></dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>channel_max:</dt>
+<dd>Override the default maximum channel count value</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>connection_attempts:</dt>
+<dd>Specify how many times pika should try and reconnect before it gives up</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>frame_max:</dt>
+<dd>Override the default maximum frame size for communication</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>heartbeat_interval:</dt>
+<dd>Specify the number of seconds between heartbeat frames to ensure that
+the link between RabbitMQ and your application is up</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>locale:</dt>
+<dd>Override the default <cite>en_US</cite> locale value</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>ssl:</dt>
+<dd>Toggle SSL, possible values are <cite>t</cite>, <cite>f</cite></dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>ssl_options:</dt>
+<dd>Arguments passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">ssl.wrap_socket()</span></code></dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>retry_delay:</dt>
+<dd>The number of seconds to sleep before attempting to connect on
+connection failure.</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>socket_timeout:</dt>
+<dd>Override low level socket timeout value</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>url</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The AMQP URL to connect to</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Connection Parameters</a><ul>
+<li><a class="reference internal" href="#connectionparameters">ConnectionParameters</a></li>
+<li><a class="reference internal" href="#urlparameters">URLParameters</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../exceptions/"
+                        title="previous chapter">Exceptions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../spec/"
+                        title="next chapter">pika.spec</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/modules/parameters.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search/" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex/" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex/" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../spec/" title="pika.spec"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../exceptions/" title="Exceptions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../">pika 0.10.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../" >Core Class and Module Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2009-2015, Tony Garnock-Jones, Gavin M. Roy, Pivotal and others..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

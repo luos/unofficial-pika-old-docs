@@ -1,0 +1,879 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Channel &#8212; pika 0.10.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+    <link rel="next" title="Connection" href="../connection/" />
+    <link rel="prev" title="Twisted Connection Adapter" href="../adapters/twisted/" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex/" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex/" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../connection/" title="Connection"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../adapters/twisted/" title="Twisted Connection Adapter"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../">pika 0.10.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../" accesskey="U">Core Class and Module Documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pika.channel">
+<span id="channel"></span><h1>Channel<a class="headerlink" href="#module-pika.channel" title="Permalink to this headline">¶</a></h1>
+<p>The Channel class provides a wrapper for interacting with RabbitMQ
+implementing the methods and behaviors for an AMQP Channel.</p>
+<div class="section" id="id1">
+<h2>Channel<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pika.channel.Channel">
+<em class="property">class </em><code class="descclassname">pika.channel.</code><code class="descname">Channel</code><span class="sig-paren">(</span><em>connection</em>, <em>channel_number</em>, <em>on_open_callback=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Channel is the primary communication method for interacting with
+RabbitMQ. It is recommended that you do not directly invoke
+the creation of a channel object in your application code but rather
+construct the a channel by calling the active connection’s channel()
+method.</p>
+<dl class="method">
+<dt id="pika.channel.Channel.add_callback">
+<code class="descname">add_callback</code><span class="sig-paren">(</span><em>callback</em>, <em>replies</em>, <em>one_shot=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.add_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass in a callback handler and a list replies from the
+RabbitMQ broker which you’d like the callback notified of. Callbacks
+should allow for the frame parameter to be passed in.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> (<em>method</em>) – The method to call</li>
+<li><strong>replies</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – The replies to get a callback for</li>
+<li><strong>one_shot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Only handle the first type callback</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.add_on_cancel_callback">
+<code class="descname">add_on_cancel_callback</code><span class="sig-paren">(</span><em>callback</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.add_on_cancel_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass a callback function that will be called when the basic_cancel
+is sent by the server. The callback function should receive a frame
+parameter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<em>method</em>) – The method to call on callback</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.add_on_close_callback">
+<code class="descname">add_on_close_callback</code><span class="sig-paren">(</span><em>callback</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.add_on_close_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass a callback function that will be called when the channel is
+closed. The callback function will receive the channel, the
+reply_code (int) and the reply_text (int) sent by the server describing
+why the channel was closed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<em>method</em>) – The method to call on callback</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.add_on_flow_callback">
+<code class="descname">add_on_flow_callback</code><span class="sig-paren">(</span><em>callback</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.add_on_flow_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass a callback function that will be called when Channel.Flow is
+called by the remote server. Note that newer versions of RabbitMQ
+will not issue this but instead use TCP backpressure</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<em>method</em>) – The method to call on callback</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.add_on_return_callback">
+<code class="descname">add_on_return_callback</code><span class="sig-paren">(</span><em>callback</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.add_on_return_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass a callback function that will be called when basic_publish as
+sent a message that has been rejected and returned by the server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<em>method</em>) – <p>The method to call on callback with the
+signature callback(channel, method, properties,</p>
+<blockquote>
+<div>body), where</div></blockquote>
+<p>channel: pika.Channel
+method: pika.spec.Basic.Return
+properties: pika.spec.BasicProperties
+body: str, unicode, or bytes (python 3.x)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.basic_ack">
+<code class="descname">basic_ack</code><span class="sig-paren">(</span><em>delivery_tag=0</em>, <em>multiple=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.basic_ack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Acknowledge one or more messages. When sent by the client, this
+method acknowledges one or more messages delivered via the Deliver or
+Get-Ok methods. When sent by server, this method acknowledges one or
+more messages published with the Publish method on a channel in
+confirm mode. The acknowledgement can be for a single message or a
+set of messages up to and including a specific message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>delivery-tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The server-assigned delivery tag</li>
+<li><strong>multiple</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – If set to True, the delivery tag is treated as
+“up to and including”, so that multiple messages
+can be acknowledged with a single method. If set
+to False, the delivery tag refers to a single
+message. If the multiple field is 1, and the
+delivery tag is zero, this indicates
+acknowledgement of all outstanding messages.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.basic_cancel">
+<code class="descname">basic_cancel</code><span class="sig-paren">(</span><em>callback=None</em>, <em>consumer_tag=''</em>, <em>nowait=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.basic_cancel" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method cancels a consumer. This does not affect already
+delivered messages, but it does mean the server will not send any more
+messages for that consumer. The client may receive an arbitrary number
+of messages in between sending the cancel method and receiving the
+cancel-ok reply. It may also be sent from the server to the client in
+the event of the consumer being unexpectedly cancelled (i.e. cancelled
+for any reason other than the server receiving the corresponding
+basic.cancel from the client). This allows clients to be notified of
+the loss of consumers due to events such as queue deletion.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>callback</strong> (<em>method</em>) – Method to call for a Basic.CancelOk response</li>
+<li><strong>consumer_tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Identifier for the consumer</li>
+<li><strong>nowait</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Do not expect a Basic.CancelOk response</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">ValueError</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.basic_consume">
+<code class="descname">basic_consume</code><span class="sig-paren">(</span><em>consumer_callback</em>, <em>queue=''</em>, <em>no_ack=False</em>, <em>exclusive=False</em>, <em>consumer_tag=None</em>, <em>arguments=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.basic_consume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends the AMQP command Basic.Consume to the broker and binds messages
+for the consumer_tag to the consumer callback. If you do not pass in
+a consumer_tag, one will be automatically generated for you. Returns
+the consumer tag.</p>
+<p>For more information on basic_consume, see:
+<a class="reference external" href="http://www.rabbitmq.com/amqp-0-9-1-reference.html#basic.consume">http://www.rabbitmq.com/amqp-0-9-1-reference.html#basic.consume</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>consumer_callback</strong> (<em>method</em>) – <p>The method to callback when consuming
+with the signature consumer_callback(channel, method, properties,</p>
+<blockquote>
+<div><blockquote>
+<div>body), where</div></blockquote>
+<p>channel: pika.Channel
+method: pika.spec.Basic.Deliver
+properties: pika.spec.BasicProperties
+body: str, unicode, or bytes (python 3.x)</p>
+</div></blockquote>
+</li>
+<li><strong>queue</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The queue to consume from</li>
+<li><strong>no_ack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Tell the broker to not expect a response</li>
+<li><strong>exclusive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Don’t allow other consumers on the queue</li>
+<li><strong>consumer_tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – Specify your own consumer tag</li>
+<li><strong>arguments</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Custom key/value pair arguments for the consume</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.basic_get">
+<code class="descname">basic_get</code><span class="sig-paren">(</span><em>callback=None</em>, <em>queue=''</em>, <em>no_ack=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.basic_get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a single message from the AMQP broker. If you want to
+be notified of Basic.GetEmpty, use the Channel.add_callback method
+adding your Basic.GetEmpty callback which should expect only one
+parameter, frame. For more information on basic_get and its
+parameters, see:</p>
+<p><a class="reference external" href="http://www.rabbitmq.com/amqp-0-9-1-reference.html#basic.get">http://www.rabbitmq.com/amqp-0-9-1-reference.html#basic.get</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> (<em>method</em>) – The method to callback with a message that has
+the signature callback(channel, method, properties, body), where:
+channel: pika.Channel
+method: pika.spec.Basic.GetOk
+properties: pika.spec.BasicProperties
+body: str, unicode, or bytes (python 3.x)</li>
+<li><strong>queue</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The queue to get a message from</li>
+<li><strong>no_ack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Tell the broker to not expect a reply</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.basic_nack">
+<code class="descname">basic_nack</code><span class="sig-paren">(</span><em>delivery_tag=None</em>, <em>multiple=False</em>, <em>requeue=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.basic_nack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method allows a client to reject one or more incoming messages.
+It can be used to interrupt and cancel large incoming messages, or
+return untreatable messages to their original queue.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>delivery-tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The server-assigned delivery tag</li>
+<li><strong>multiple</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – If set to True, the delivery tag is treated as
+“up to and including”, so that multiple messages
+can be acknowledged with a single method. If set
+to False, the delivery tag refers to a single
+message. If the multiple field is 1, and the
+delivery tag is zero, this indicates
+acknowledgement of all outstanding messages.</li>
+<li><strong>requeue</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – If requeue is true, the server will attempt to
+requeue the message. If requeue is false or the
+requeue attempt fails the messages are discarded or
+dead-lettered.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.basic_publish">
+<code class="descname">basic_publish</code><span class="sig-paren">(</span><em>exchange</em>, <em>routing_key</em>, <em>body</em>, <em>properties=None</em>, <em>mandatory=False</em>, <em>immediate=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.basic_publish" title="Permalink to this definition">¶</a></dt>
+<dd><p>Publish to the channel with the given exchange, routing key and body.
+For more information on basic_publish and what the parameters do, see:</p>
+<p><a class="reference external" href="http://www.rabbitmq.com/amqp-0-9-1-reference.html#basic.publish">http://www.rabbitmq.com/amqp-0-9-1-reference.html#basic.publish</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>exchange</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The exchange to publish to</li>
+<li><strong>routing_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The routing key to bind on</li>
+<li><strong>body</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The message body</li>
+<li><strong>properties</strong> (<a class="reference internal" href="../spec/#pika.spec.BasicProperties" title="pika.spec.BasicProperties"><em>pika.spec.BasicProperties</em></a>) – Basic.properties</li>
+<li><strong>mandatory</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – The mandatory flag</li>
+<li><strong>immediate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – The immediate flag</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.basic_qos">
+<code class="descname">basic_qos</code><span class="sig-paren">(</span><em>callback=None</em>, <em>prefetch_size=0</em>, <em>prefetch_count=0</em>, <em>all_channels=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.basic_qos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify quality of service. This method requests a specific quality
+of service. The QoS can be specified for the current channel or for all
+channels on the connection. The client can request that messages be sent
+in advance so that when the client finishes processing a message, the
+following message is already held locally, rather than needing to be
+sent down the channel. Prefetching gives a performance improvement.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> (<em>method</em>) – The method to callback for Basic.QosOk response</li>
+<li><strong>prefetch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – This field specifies the prefetch window
+size. The server will send a message in
+advance if it is equal to or smaller in size
+than the available prefetch size (and also
+falls into other prefetch limits). May be set
+to zero, meaning “no specific limit”,
+although other prefetch limits may still
+apply. The prefetch-size is ignored if the
+no-ack option is set.</li>
+<li><strong>prefetch_count</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Specifies a prefetch window in terms of whole
+messages. This field may be used in
+combination with the prefetch-size field; a
+message will only be sent in advance if both
+prefetch windows (and those at the channel
+and connection level) allow it. The
+prefetch-count is ignored if the no-ack
+option is set.</li>
+<li><strong>all_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Should the QoS apply to all channels</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.basic_reject">
+<code class="descname">basic_reject</code><span class="sig-paren">(</span><em>delivery_tag</em>, <em>requeue=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.basic_reject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reject an incoming message. This method allows a client to reject a
+message. It can be used to interrupt and cancel large incoming messages,
+or return untreatable messages to their original queue.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>delivery-tag</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The server-assigned delivery tag</li>
+<li><strong>requeue</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – If requeue is true, the server will attempt to
+requeue the message. If requeue is false or the
+requeue attempt fails the messages are discarded or
+dead-lettered.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">TypeError</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.basic_recover">
+<code class="descname">basic_recover</code><span class="sig-paren">(</span><em>callback=None</em>, <em>requeue=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.basic_recover" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method asks the server to redeliver all unacknowledged messages
+on a specified channel. Zero or more messages may be redelivered. This
+method replaces the asynchronous Recover.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> (<em>method</em>) – Method to call when receiving Basic.RecoverOk</li>
+<li><strong>requeue</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – If False, the message will be redelivered to the
+original recipient. If True, the server will
+attempt to requeue the message, potentially then
+delivering it to an alternative subscriber.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.close">
+<code class="descname">close</code><span class="sig-paren">(</span><em>reply_code=0</em>, <em>reply_text='Normal Shutdown'</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will invoke a clean shutdown of the channel with the AMQP Broker.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>reply_code</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The reply code to close the channel with</li>
+<li><strong>reply_text</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The reply text to close the channel with</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.confirm_delivery">
+<code class="descname">confirm_delivery</code><span class="sig-paren">(</span><em>callback=None</em>, <em>nowait=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.confirm_delivery" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn on Confirm mode in the channel. Pass in a callback to be
+notified by the Broker when a message has been confirmed as received or
+rejected (Basic.Ack, Basic.Nack) from the broker to the publisher.</p>
+<dl class="docutils">
+<dt>For more information see:</dt>
+<dd><a class="reference external" href="http://www.rabbitmq.com/extensions.html#confirms">http://www.rabbitmq.com/extensions.html#confirms</a></dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> (<em>method</em>) – The callback for delivery confirmations</li>
+<li><strong>nowait</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Do not send a reply frame (Confirm.SelectOk)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pika.channel.Channel.consumer_tags">
+<code class="descname">consumer_tags</code><a class="headerlink" href="#pika.channel.Channel.consumer_tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property method that returns a list of currently active consumers</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)">list</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.exchange_bind">
+<code class="descname">exchange_bind</code><span class="sig-paren">(</span><em>callback=None</em>, <em>destination=None</em>, <em>source=None</em>, <em>routing_key=''</em>, <em>nowait=False</em>, <em>arguments=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.exchange_bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind an exchange to another exchange.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> (<em>method</em>) – The method to call on Exchange.BindOk</li>
+<li><strong>destination</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The destination exchange to bind</li>
+<li><strong>source</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The source exchange to bind to</li>
+<li><strong>routing_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The routing key to bind on</li>
+<li><strong>nowait</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Do not wait for an Exchange.BindOk</li>
+<li><strong>arguments</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Custom key/value pair arguments for the binding</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.exchange_declare">
+<code class="descname">exchange_declare</code><span class="sig-paren">(</span><em>callback=None</em>, <em>exchange=None</em>, <em>exchange_type='direct'</em>, <em>passive=False</em>, <em>durable=False</em>, <em>auto_delete=False</em>, <em>internal=False</em>, <em>nowait=False</em>, <em>arguments=None</em>, <em>type=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.exchange_declare" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method creates an exchange if it does not already exist, and if
+the exchange exists, verifies that it is of the correct and expected
+class.</p>
+<p>If passive set, the server will reply with Declare-Ok if the exchange
+already exists with the same name, and raise an error if not and if the
+exchange does not already exist, the server MUST raise a channel
+exception with reply code 404 (not found).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> (<em>method</em>) – Call this method on Exchange.DeclareOk</li>
+<li><strong>exchange</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode
+sequence of these characters: letters</em><em>,
+</em><em>digits</em><em>, </em><em>hyphen</em><em>, </em><em>underscore</em><em>, </em><em>period</em><em>, or
+</em><em>colon.</em>) – The exchange name consists of a non-empty</li>
+<li><strong>exchange_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The exchange type to use</li>
+<li><strong>passive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Perform a declare or just check to see if it exists</li>
+<li><strong>durable</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Survive a reboot of RabbitMQ</li>
+<li><strong>auto_delete</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Remove when no more queues are bound to it</li>
+<li><strong>internal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Can only be published to by other exchanges</li>
+<li><strong>nowait</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Do not expect an Exchange.DeclareOk response</li>
+<li><strong>arguments</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Custom key/value pair arguments for the exchange</li>
+<li><strong>type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – The deprecated exchange type parameter</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.exchange_delete">
+<code class="descname">exchange_delete</code><span class="sig-paren">(</span><em>callback=None</em>, <em>exchange=None</em>, <em>if_unused=False</em>, <em>nowait=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.exchange_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the exchange.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> (<em>method</em>) – The method to call on Exchange.DeleteOk</li>
+<li><strong>exchange</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The exchange name</li>
+<li><strong>if_unused</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – only delete if the exchange is unused</li>
+<li><strong>nowait</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Do not wait for an Exchange.DeleteOk</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.exchange_unbind">
+<code class="descname">exchange_unbind</code><span class="sig-paren">(</span><em>callback=None</em>, <em>destination=None</em>, <em>source=None</em>, <em>routing_key=''</em>, <em>nowait=False</em>, <em>arguments=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.exchange_unbind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unbind an exchange from another exchange.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> (<em>method</em>) – The method to call on Exchange.UnbindOk</li>
+<li><strong>destination</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The destination exchange to unbind</li>
+<li><strong>source</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The source exchange to unbind from</li>
+<li><strong>routing_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The routing key to unbind</li>
+<li><strong>nowait</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Do not wait for an Exchange.UnbindOk</li>
+<li><strong>arguments</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Custom key/value pair arguments for the binding</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.flow">
+<code class="descname">flow</code><span class="sig-paren">(</span><em>callback</em>, <em>active</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.flow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn Channel flow control off and on. Pass a callback to be notified
+of the response from the server. active is a bool. Callback should
+expect a bool in response indicating channel flow state. For more
+information, please reference:</p>
+<p><a class="reference external" href="http://www.rabbitmq.com/amqp-0-9-1-reference.html#channel.flow">http://www.rabbitmq.com/amqp-0-9-1-reference.html#channel.flow</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> (<em>method</em>) – The callback method</li>
+<li><strong>active</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Turn flow on or off</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pika.channel.Channel.is_closed">
+<code class="descname">is_closed</code><a class="headerlink" href="#pika.channel.Channel.is_closed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the channel is closed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pika.channel.Channel.is_closing">
+<code class="descname">is_closing</code><a class="headerlink" href="#pika.channel.Channel.is_closing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the channel is closing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pika.channel.Channel.is_open">
+<code class="descname">is_open</code><a class="headerlink" href="#pika.channel.Channel.is_open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the channel is open.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)">bool</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.open">
+<code class="descname">open</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open the channel</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.queue_bind">
+<code class="descname">queue_bind</code><span class="sig-paren">(</span><em>callback</em>, <em>queue</em>, <em>exchange</em>, <em>routing_key=None</em>, <em>nowait=False</em>, <em>arguments=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.queue_bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind the queue to the specified exchange</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> (<em>method</em>) – The method to call on Queue.BindOk</li>
+<li><strong>queue</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The queue to bind to the exchange</li>
+<li><strong>exchange</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The source exchange to bind to</li>
+<li><strong>routing_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The routing key to bind on</li>
+<li><strong>nowait</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Do not wait for a Queue.BindOk</li>
+<li><strong>arguments</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Custom key/value pair arguments for the binding</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.queue_declare">
+<code class="descname">queue_declare</code><span class="sig-paren">(</span><em>callback</em>, <em>queue=''</em>, <em>passive=False</em>, <em>durable=False</em>, <em>exclusive=False</em>, <em>auto_delete=False</em>, <em>nowait=False</em>, <em>arguments=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.queue_declare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Declare queue, create if needed. This method creates or checks a
+queue. When creating a new queue the client can specify various
+properties that control the durability of the queue and its contents,
+and the level of sharing for the queue.</p>
+<p>Leave the queue name empty for a auto-named queue in RabbitMQ</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> (<em>method</em>) – The method to call on Queue.DeclareOk</li>
+<li><strong>queue</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The queue name</li>
+<li><strong>passive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Only check to see if the queue exists</li>
+<li><strong>durable</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Survive reboots of the broker</li>
+<li><strong>exclusive</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Only allow access by the current connection</li>
+<li><strong>auto_delete</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Delete after consumer cancels or disconnects</li>
+<li><strong>nowait</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Do not wait for a Queue.DeclareOk</li>
+<li><strong>arguments</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Custom key/value arguments for the queue</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.queue_delete">
+<code class="descname">queue_delete</code><span class="sig-paren">(</span><em>callback=None</em>, <em>queue=''</em>, <em>if_unused=False</em>, <em>if_empty=False</em>, <em>nowait=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.queue_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a queue from the broker.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> (<em>method</em>) – The method to call on Queue.DeleteOk</li>
+<li><strong>queue</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The queue to delete</li>
+<li><strong>if_unused</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – only delete if it’s unused</li>
+<li><strong>if_empty</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – only delete if the queue is empty</li>
+<li><strong>nowait</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Do not wait for a Queue.DeleteOk</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.queue_purge">
+<code class="descname">queue_purge</code><span class="sig-paren">(</span><em>callback=None</em>, <em>queue=''</em>, <em>nowait=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.queue_purge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Purge all of the messages from the specified queue</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> (<em>method</em>) – The method to call on Queue.PurgeOk</li>
+<li><strong>queue</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The queue to purge</li>
+<li><strong>nowait</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Do not expect a Queue.PurgeOk response</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.queue_unbind">
+<code class="descname">queue_unbind</code><span class="sig-paren">(</span><em>callback=None</em>, <em>queue=''</em>, <em>exchange=None</em>, <em>routing_key=None</em>, <em>arguments=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.queue_unbind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unbind a queue from an exchange.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callback</strong> (<em>method</em>) – The method to call on Queue.UnbindOk</li>
+<li><strong>queue</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The queue to unbind from the exchange</li>
+<li><strong>exchange</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The source exchange to bind from</li>
+<li><strong>routing_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> or </em><em>unicode</em>) – The routing key to unbind</li>
+<li><strong>arguments</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Custom key/value pair arguments for the binding</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.tx_commit">
+<code class="descname">tx_commit</code><span class="sig-paren">(</span><em>callback=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.tx_commit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Commit a transaction</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<em>method</em>) – The callback for delivery confirmations</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.tx_rollback">
+<code class="descname">tx_rollback</code><span class="sig-paren">(</span><em>callback=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.tx_rollback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rollback a transaction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<em>method</em>) – The callback for delivery confirmations</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pika.channel.Channel.tx_select">
+<code class="descname">tx_select</code><span class="sig-paren">(</span><em>callback=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pika.channel.Channel.tx_select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select standard transaction mode. This method sets the channel to use
+standard transactions. The client must use this method at least once on
+a channel before using the Commit or Rollback methods.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> (<em>method</em>) – The callback for delivery confirmations</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Channel</a><ul>
+<li><a class="reference internal" href="#id1">Channel</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../adapters/twisted/"
+                        title="previous chapter">Twisted Connection Adapter</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../connection/"
+                        title="next chapter">Connection</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/modules/channel.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search/" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex/" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex/" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../connection/" title="Connection"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../adapters/twisted/" title="Twisted Connection Adapter"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../">pika 0.10.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../" >Core Class and Module Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2009-2015, Tony Garnock-Jones, Gavin M. Roy, Pivotal and others..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

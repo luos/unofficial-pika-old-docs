@@ -1,0 +1,198 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Using URLParameters &#8212; pika 0.10.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+    <link rel="next" title="Connecting to RabbitMQ with Callback-Passing Style" href="../connecting_async/" />
+    <link rel="prev" title="Usage Examples" href="../" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex/" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex/" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../connecting_async/" title="Connecting to RabbitMQ with Callback-Passing Style"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../" title="Usage Examples"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../">pika 0.10.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../" accesskey="U">Usage Examples</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="using-urlparameters">
+<h1>Using URLParameters<a class="headerlink" href="#using-urlparameters" title="Permalink to this headline">¶</a></h1>
+<p>Pika has two methods of encapsulating the data that lets it know how to connect
+to RabbitMQ, <a class="reference internal" href="../../modules/parameters/#pika.connection.ConnectionParameters" title="pika.connection.ConnectionParameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">pika.connection.ConnectionParameters</span></code></a> and <a class="reference internal" href="../../modules/parameters/#pika.connection.URLParameters" title="pika.connection.URLParameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">pika.connection.URLParameters</span></code></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you’re connecting to RabbitMQ on localhost on port 5672, with the default virtual host of <em>/</em> and the default username and password of <em>guest</em> and <em>guest</em>, you do not need to specify connection parameters when connecting.</p>
+</div>
+<p>Using <a class="reference internal" href="../../modules/parameters/#pika.connection.URLParameters" title="pika.connection.URLParameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">pika.connection.URLParameters</span></code></a> is an easy way to minimize the
+variables required to connect to RabbitMQ and supports all of the directives
+that <a class="reference internal" href="../../modules/parameters/#pika.connection.ConnectionParameters" title="pika.connection.ConnectionParameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">pika.connection.ConnectionParameters</span></code></a> supports.</p>
+<p>The following is the format for the URLParameters connection value:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>scheme://username:password@host:port/virtual_host?key=value&amp;key=value
+</pre></div>
+</div>
+<p>As you can see, by default, the scheme (amqp, amqps), username, password, host, port and virtual host make up the core of the URL and any other parameter is passed in as query string values.</p>
+<div class="section" id="example-connection-urls">
+<h2>Example Connection URLS<a class="headerlink" href="#example-connection-urls" title="Permalink to this headline">¶</a></h2>
+<p>The default connection URL connects to the / virtual host as guest using the guest password on localhost port 5672. Note the forwardslash in the URL is encoded to %2F:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">amqp</span><span class="p">:</span><span class="o">//</span><span class="n">guest</span><span class="p">:</span><span class="n">guest</span><span class="nd">@localhost</span><span class="p">:</span><span class="mi">5672</span><span class="o">/%</span><span class="mi">2</span><span class="n">F</span>
+</pre></div>
+</div>
+<p>Connect to a host <em>rabbit1</em> as the user <em>www-data</em> using the password <em>rabbit_pwd</em> on the virtual host <em>web_messages</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">amqp</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="p">:</span><span class="n">rabbit_pwd</span><span class="nd">@rabbit1</span><span class="o">/</span><span class="n">web_messages</span>
+</pre></div>
+</div>
+<p>Connecting via SSL is pretty easy too. To connect via SSL for the previous example, simply change the scheme to <em>amqps</em>. If you do not specify a port, Pika will use the default SSL port of 5671:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">amqps</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="p">:</span><span class="n">rabbit_pwd</span><span class="nd">@rabbit1</span><span class="o">/</span><span class="n">web_messages</span>
+</pre></div>
+</div>
+<p>If you’re looking to tweak other parameters, such as enabling heartbeats, simply add the key/value pair as a query string value. The following builds upon the SSL connection, enabling heartbeats every 30 seconds:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>amqps://www-data:rabbit_pwd@rabbit1/web_messages?heartbeat_interval=30
+</pre></div>
+</div>
+<p>Options that are available as query string values:</p>
+<ul class="simple">
+<li>backpressure_detection: Pass in a value of <em>t</em> to enable backpressure detection, it is disabled by default.</li>
+<li>channel_max: Alter the default channel maximum by passing in a 32-bit integer value here</li>
+<li>connection_attempts: Alter the default of 1 connection attempt by passing in an integer value here <a class="footnote-reference" href="#f1" id="id1">[1]</a>.</li>
+<li>frame_max: Alter the default frame maximum size value by passing in a long integer value <a class="footnote-reference" href="#f2" id="id2">[2]</a>.</li>
+<li>heartbeat_interval: Pass a value greater than zero to enable heartbeats between the server and your application. The integer value you pass here will be the number of seconds between heartbeats.</li>
+<li>locale: Set the locale of the client using underscore delimited posix Locale code in ll_CC format (en_US, pt_BR, de_DE).</li>
+<li>retry_delay: The number of seconds to wait before attempting to reconnect on a failed connection, if connection_attempts is &gt; 0.</li>
+<li>socket_timeout: Change the default socket timeout duration from 0.25 seconds to another integer or float value. Adjust with caution.</li>
+<li><dl class="first docutils">
+<dt>ssl_options: A url encoded dict of values for the SSL connection. The available keys are:</dt>
+<dd><ul class="first last">
+<li>ca_certs</li>
+<li>cert_reqs</li>
+<li>certfile</li>
+<li>keyfile</li>
+<li>ssl_version</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>For an information on what the ssl_options can be set to reference the <a class="reference external" href="http://docs.python.org/2/library/ssl.html">official Python documentation</a>. Here is an example of setting the client certificate and key:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>amqp://www-data:rabbit_pwd@rabbit1/web_messages?heartbeat_interval=30&amp;ssl_options=%7B%27keyfile%27%3A+%27%2Fetc%2Fssl%2Fmykey.pem%27%2C+%27certfile%27%3A+%27%2Fetc%2Fssl%2Fmycert.pem%27%7D
+</pre></div>
+</div>
+<p>The following example demonstrates how to generate the ssl_options string with <a class="reference external" href="http://docs.python.org/2/library/urllib.html">Python’s urllib</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">urllib</span>
+<span class="n">urllib</span><span class="o">.</span><span class="n">urlencode</span><span class="p">({</span><span class="s1">&#39;ssl_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;certfile&#39;</span><span class="p">:</span> <span class="s1">&#39;/etc/ssl/mycert.pem&#39;</span><span class="p">,</span> <span class="s1">&#39;keyfile&#39;</span><span class="p">:</span> <span class="s1">&#39;/etc/ssl/mykey.pem&#39;</span><span class="p">}})</span>
+</pre></div>
+</div>
+<p class="rubric">Footnotes</p>
+<table class="docutils footnote" frame="void" id="f1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>The <a class="reference internal" href="../../modules/adapters/blocking/#pika.adapters.blocking_connection.BlockingConnection" title="pika.adapters.blocking_connection.BlockingConnection"><code class="xref py py-class docutils literal notranslate"><span class="pre">pika.adapters.blocking_connection.BlockingConnection</span></code></a> adapter does not respect the <em>connection_attempts</em> parameter.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="f2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>The AMQP specification states that a server can reject a request for a frame size larger than the value it passes during content negotiation.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Using URLParameters</a><ul>
+<li><a class="reference internal" href="#example-connection-urls">Example Connection URLS</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../"
+                        title="previous chapter">Usage Examples</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../connecting_async/"
+                        title="next chapter">Connecting to RabbitMQ with Callback-Passing Style</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/using_urlparameters.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search/" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex/" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex/" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../connecting_async/" title="Connecting to RabbitMQ with Callback-Passing Style"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../" title="Usage Examples"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../">pika 0.10.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../" >Usage Examples</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2009-2015, Tony Garnock-Jones, Gavin M. Roy, Pivotal and others..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>
